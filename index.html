@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf8" />
+    <title>Cardano Block Propagation Performance</title>
+    <link rel="stylesheet" href="/blocklog/timeline/dist/style.css" />
+    <!-- replace this path  -->
+    <link rel="stylesheet" href="/blocklog/timeline/css/reset.css" />
+	<link rel="apple-touch-icon" sizes="180x180" href="/blocklog/timeline/fav/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/blocklog/timeline/fav/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/blocklog/timeline/fav/favicon-16x16.png">
+
+	<!-- Gantt Timeline Diagram Library from https://github.com/neuronetio/gantt-schedule-timeline-calendar -->
+
+  </head>
+  <body>
+    <style>
+      .gstc__chart-timeline-items-row-item {
+        border-radius: 0px;
+      }
+      .gstc__chart-timeline-items-row-item-label {
+        margin-left: 0px;
+        margin-right: 0px;
+      }
+      body.gstc--dark {
+        background: #323743;
+        color: #ffffffbf;
+      }
+      #toolbox {
+        margin: 20px;
+      }
+      #toolbox button {
+        border-radius: 3px;
+        padding: 8px;
+        margin-right: 11px;
+        color: #000000de;
+      }
+      .gstc--dark #toolbox button {
+        background-color: #1e2128;
+        border: 1px solid #1e2128;
+        color: #ffffffa8;
+      }
+      #toolbox * {
+        user-select: none;
+      }
+      #toolbox label {
+        cursor: pointer;
+      }
+    </style>
+	<div style="margin:10px"><label for="zoom">Zoom: </label> <input type="range" min="0" max="5" value="4" id="zoom" /></div>
+	<div id="gstc"></div>
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
+    <script src="https://unpkg.com/tippy.js@6"></script>
+    <script type="module" src="/blocklog/timeline/index.js"></script>
+    <!-- replace this path  -->
+  </body>
+</html>
