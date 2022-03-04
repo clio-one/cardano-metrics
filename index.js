@@ -4,9 +4,35 @@ import { Plugin as DependencyLines } from '/blocklog/timeline/dist/plugins/depen
 
 const colors = ['rgba(150, 150, 150, 0.2)', '#e17d63', '#77576b', '#555d74'];
 
-const response = await fetch('https://api.clio.one/blocklog/v1/fetch/');
-const data = await response.json();
+
+//var response = await fetch('https://api.clio.one/blocklog/v1/fetch/?from=2022-03-02%2002:35:00&to=2022-03-02%2002:37:00');
+var response = await fetch('https://api.clio.one/blocklog/v1/fetch/');
+var data = await response.json();
 console.log(data);
+
+async function refreshData() {
+	response = await fetch('https://api.clio.one/blocklog/v1/fetch/');
+	data = await response.json();
+	console.log(data);
+	console.log(data.base.fromISO);
+	console.log(data.base.toISO);
+	state.update('config.chart.items', {});
+	state.update('config.list.rows', {} );
+	//state.update('config.chart.time.from', GSTC.api.date(data.base.fromISO).valueOf());
+	state.update('config.chart.time.from', GSTC.api.date('2022-02-03 15:31:00').valueOf() );
+	//state.update('config.chart.time.to', GSTC.api.date(data.base.toISO).valueOf());
+	state.update('config.chart.time.to', GSTC.api.date('2022-02-03 15:36:00').valueOf());
+	/*state.update('config.chart.time', (time) => {
+		time.from = GSTC.api.date('2022-02-03T14:27:00').valueOf();
+		//time.from = GSTC.api.date(data.base.fromISO).valueOf();
+		time.to = GSTC.api.date('2022-02-03T14:32:00').valueOf();
+		//time.to = GSTC.api.date(data.base.toISO).valueOf();
+	}); */
+	state.update('config.list.rows', GSTC.api.fromArray(data.nodes));
+	state.update('config.chart.items', GSTC.api.fromArray(data.blocks));
+	
+}
+
 
 const columnsFromDB = [
   {
@@ -38,7 +64,18 @@ const seconds = [
     periodIncrement: 1,
     main: true,
     format({ timeStart, vido }) {
-      return vido.html`<div style="text-align:center;">${timeStart.format('D-MMM HH:mm:ss')}</div>`; // full list of formats: https://day.js.org/docs/en/display/format
+      return timeStart.format('D-MMM ');
+    },
+  },
+];
+
+const seconds2 = [
+  {
+    zoomTo: 100, // we want to display this format for all zoom levels until 100
+    period: 'second',
+    periodIncrement: 1,
+    format({ timeStart }) {
+      return timeStart.format('HH:mm:ss');
     },
   },
 ];
@@ -93,15 +130,15 @@ const config = {
     rows: GSTC.api.fromArray(data.nodes),
   },
   chart: {
+    item: {
+		minWidth: 1,
+		overlap: true
+	},
     items: GSTC.api.fromArray(data.blocks),
-    calendarLevels: [seconds],
+    calendarLevels: [seconds, seconds2],
     time: {
       zoom: 4,
       period: 'second',
-      //from: data.base.from.valueOf(),
-      //to: data.base.to.valueOf(),
-      //from: GSTC.api.date('2022-02-24T22:20:00').valueOf(),
-      //to: GSTC.api.date('2022-02-24T22:25:00').valueOf(),
     },
   },
   actions: {
@@ -131,4 +168,8 @@ document.getElementById('zoom').addEventListener('input', (ev) => {
   const value = ev.target.value;
   console.log(value);
   state.update('config.chart.time.zoom', value);
+});
+
+document.getElementById('refresh').addEventListener('click', (ev) => {
+	refreshData();
 });
