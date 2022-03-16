@@ -1,12 +1,12 @@
 import GSTC from '/blocklog/timeline/dist/gstc.esm.min.js';
 import { Plugin as CalendarScroll } from '/blocklog/timeline/dist/plugins/calendar-scroll.esm.min.js';
 import { Plugin as DependencyLines } from '/blocklog/timeline/dist/plugins/dependency-lines.esm.min.js';
+//import { Plugin as TimeBookmarks } from '/blocklog/timeline/dist/plugins/time-bookmarks.esm.min.js';
 
 const colors = ['rgba(150, 150, 150, 0.2)', '#e17d63', '#77576b', '#555d74'];
 
 
-//var response = await fetch('https://api.clio.one/blocklog/v1/fetch/?from=2022-03-02%2002:35:00&to=2022-03-02%2002:37:00');
-var response = await fetch('https://api.clio.one/blocklog/v1/fetch/');
+var response = await fetch('https://api.clio.one/blocklog/v1/fetch/index-dev.asp');
 var data = await response.json();
 console.log(data);
 
@@ -40,7 +40,7 @@ const columnsFromDB = [
     label: 'ID',
     data: ({ row }) => Number(GSTC.api.sourceID(row.id)), // show original id
     sortable: ({ row }) => Number(GSTC.api.sourceID(row.id)), // sort by id converted to number
-    width: 40,
+    width: 60,
     header: {
       content: 'ID',
     },
@@ -54,28 +54,57 @@ const columnsFromDB = [
     header: {
       content: 'Node',
     },
+  },  {
+    id: 'continent',
+    data: 'continent',
+    sortable: 'continent',
+    isHTML: false,
+    width: 40,
+    header: {
+      content: 'Cnt',
+    },
+  },  {
+    id: 'country',
+    data: 'country',
+    sortable: 'country',
+    isHTML: false,
+    width: 40,
+    header: {
+      content: 'Nat',
+    },
   },
 ];
 
-const seconds = [
+const days = [
   {
     zoomTo: 100, // we want to display this format for all zoom levels until ...
     period: 'second',
     periodIncrement: 1,
     main: true,
-    format({ timeStart, vido }) {
+    format({ timeStart }) {
       return timeStart.format('D-MMM ');
     },
   },
 ];
 
-const seconds2 = [
+const seconds = [
   {
     zoomTo: 100, // we want to display this format for all zoom levels until 100
     period: 'second',
     periodIncrement: 1,
     format({ timeStart }) {
       return timeStart.format('HH:mm:ss');
+    },
+  },
+];
+
+const slots = [
+  {
+    zoomTo: 100, // we want to display this format for all zoom levels until 100
+    period: 'second',
+    periodIncrement: 1,
+    format({ timeStart }) {
+      return GSTC.api.date(timeStart).valueOf()/1000 - 1591566291;
     },
   },
 ];
@@ -89,13 +118,14 @@ function setTippyContent(element, data) {
   if (!itemData) return element._tippy.destroy();
   if (itemData.detached && element._tippy) return element._tippy.destroy();
   // @ts-ignore
-  if (!itemData.detached && !element._tippy) tippy(element, { trigger: 'mouseenter click' });
+  if (!itemData.detached && !element._tippy) tippy(element, { trigger: 'click' });
   if (!element._tippy) return;
   const startDate = itemData.time.startDate;
   const endDate = itemData.time.endDate;
   const deltaDate = itemData.time.endDate - itemData.time.startDate + 1 
   const tooltipContent = `${data.item.tlabel} in ${deltaDate}ms at ${endDate.format('mm:ss.SSS')} `;
   //const tooltipContent = `${data.item.tlabel} at ${startDate} `;
+  //element._tippy.class.theme="material";
   element._tippy.setContent(tooltipContent);
 }
 
@@ -121,6 +151,7 @@ const config = {
 
   plugins: [
     CalendarScroll(),
+    //TimeBookmarks(GSTC.api.fromArray(data.blocks)),
   ],
 
   list: {
@@ -134,10 +165,10 @@ const config = {
 		minWidth: 1,
 		overlap: true
 	},
-    items: GSTC.api.fromArray(data.blocks),
-    calendarLevels: [seconds, seconds2],
+    items: GSTC.api.fromArray(data.timestamps),
+    calendarLevels: [days, seconds, slots],
     time: {
-      zoom: 4,
+      zoom: 3,
       period: 'second',
     },
   },
@@ -166,10 +197,10 @@ globalThis.state = state;
 
 document.getElementById('zoom').addEventListener('input', (ev) => {
   const value = ev.target.value;
-  console.log(value);
   state.update('config.chart.time.zoom', value);
 });
 
-document.getElementById('refresh').addEventListener('click', (ev) => {
-	refreshData();
-});
+//document.getElementById('refresh').addEventListener('click', (ev) => {
+//	refreshData();
+//});
+

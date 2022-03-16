@@ -11,7 +11,6 @@
 	<link rel="icon" type="image/png" sizes="16x16" href="/blocklog/timeline/fav/favicon-16x16.png">
 
 	<!-- Gantt Timeline Diagram Library from https://github.com/neuronetio/gantt-schedule-timeline-calendar -->
-
   </head>
   <body>
     <style>
@@ -46,12 +45,37 @@
       #toolbox label {
         cursor: pointer;
       }
+	  #legend {
+		border-radius:5px;
+		-moz-border-radius:5px;
+		-webkit-border-radius:5px;
+		width: 15px;
+		height: 15px;
+	  }
+	  .tippy-box {
+	    background-color: #909090;
+	    color: #FFFFFF;
+	  }	  
+	  .tippy-arrow {
+	    color: #909090;
+	  }	  
     </style>
-	<div style="margin:10px"><label for="zoom">Zoom: </label> <input type="range" min="0" max="5" value="4" id="zoom" /></div>
+	<div style="margin:10px">Main.Edition <label for="zoom">Zoom: </label> <input type="range" min="0" max="5" value="3" id="zoom" /></div>
+	<!--<div style="margin:10px"><input type="button" id="refresh" value="Refresh" /></div>-->
 	<div id="gstc"></div>
     <script src="https://unpkg.com/@popperjs/core@2"></script>
     <script src="https://unpkg.com/tippy.js@6"></script>
     <script type="module" src="/blocklog/timeline/index.js"></script>
-    <!-- replace this path  -->
+	<div style="margin:10px"><p>Legend:</p>
+		<p style="color:rgba(150, 150, 150, 0.4)">&#9632; Time from the beginning of the time slot until the node has heard of the new block for the first time</p>
+		<p style="color:#e17d63">&#9632; when the node first requested the entire block</p>
+		<p style="color:#8c8c00">&#9632; when the node first downloaded the block</p>
+		<p style="color:#006633">&#9632; when the node completed validation and adoption to local chain</p>
+		
+	<p>&nbsp;</p>
+	<p>Best viewed on desktop screens
+	<p>note the clickable tooltips for each bar
+	<p>use ?slot=[slotnumber] to show a specific slot 
+	</div>
   </body>
 </html>
